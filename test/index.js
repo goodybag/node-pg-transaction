@@ -10,8 +10,7 @@ var
 ;
 
 var
-  connectionStr = 'tcp://localhost:5432'
-, client = null
+  connectionStr = process.env['PG_CON'] || '';
 ;
 
 describe('transaction', function(){
