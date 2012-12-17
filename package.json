@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "pg": "0.10.x",
+    "should": "1.2.x"
+  }
+}
