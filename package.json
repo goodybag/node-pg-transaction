@@ -1,6 +1,33 @@
 {
+  "name": "node-pg-transaction",
+  "version": "0.0.1",
+  "description": "simplify executing transactions with node-postgres",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
   "dependencies": {
-    "pg": "0.10.x",
+    "pg": "0.10.x"
+  },
+  "devDependencies": {
+    "mocha": "1.7.x",
     "should": "1.2.x"
-  }
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/goodybag/node-pg-transaction.git"
+  },
+  "keywords": [
+    "postgres",
+    "postgresql",
+    "postgre",
+    "node-postgres",
+    "transactions",
+    "transaction"
+  ],
+  "author": "Lalit Kapoor <lalit@goodybag.com>",
+  "license": "MIT"
 }
