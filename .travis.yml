@@ -1,3 +1,7 @@
 language: node_js
+before_script:
+  - psql -c 'create database node_pg_transaction;' -U postgres
+env:
+  - PG_CON="postgres://postgres@127.0.0.1/node_pg_transaction"
 node_js:
   - 0.8
