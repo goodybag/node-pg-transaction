@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/goodybag/node-pg-transaction.png)](https://travis-ci.org/goodybag/node-pg-transaction)
 
-Make it easier to write transactions for PostgreSQL using node-postgres.
+Make it easier to write transactions for PostgreSQL using [node-postgres](https://github.com/brianc/node-postgres).
 
 The callback and event emitter styles both work.  
 **Note:** if you use a callback, then the error event won't be emitted. This is consistent with node-postgres.
