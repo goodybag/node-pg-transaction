@@ -2,7 +2,8 @@
 
 Make it easier to write transactions for PostgreSQL using node-postgres.
 
-The callback and event emitter styles both work. **Note:** if you use a callback, then the error event won't be emitted. This is consistent with node-postgres.
+The callback and event emitter styles both work.  
+**Note:** if you use a callback, then the error event won't be emitted. This is consistent with node-postgres.
 
 ##Install:
 
