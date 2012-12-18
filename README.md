@@ -14,7 +14,7 @@ var
 , Transaction = require('pg-transaction')
 
   // Configuration stuff
-, connectionString = 'postgres://localhost:5432/'
+, connectionString = process.env['PG_CON'] || '';
 ;
 
 var die = function(err){
