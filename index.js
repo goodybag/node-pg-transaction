@@ -4,7 +4,7 @@
  */
 
 var
-  Transaction = require('./lib/transaction')
+  Transaction = require('./lib')
 ;
 
 module.exports = Transaction;
