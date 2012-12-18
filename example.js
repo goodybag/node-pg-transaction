@@ -28,5 +28,5 @@ tx.commit();
 client.query("SELECT COUNT(*) as count FROM beatles", function(err, result){
   if (err) return die(err);
   console.log(result.rows[0].count); // 1
-  client.end(); // close connection
+  client.end();
 });
