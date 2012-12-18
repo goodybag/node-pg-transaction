@@ -2,6 +2,35 @@
 
 Make it easier to write transactions for PostgreSQL using node-postgres.
 
+The callback and event emitter styles both work. **Note:** if you use a callback, then the error event won't be emitted. This is consistent with node-postgres.
+
+##Install:
+
+To install the most recent release from npm, run:
+
+```
+npm install pg-transaction
+```
+
+## Methods:
+
+```javascript
+begin(callback);
+query(config, values, callback); // this is pg.Client.query from node-postgres
+savepoint(savepoint, callback);
+release(savepoint, callback);
+rollback(savepoint, callback);
+commit(callback);
+```
+
+## Events:
+
+- row
+- end
+- error
+
+## Example:
+
 ```javascript
 
 /**
