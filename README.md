@@ -67,7 +67,7 @@ tx.rollback('savepoint1'); // all statements after savepoint1 are undone (John w
 tx.release('savepoint1'); // can no longer use savepoint1 as a point to rollback to
 tx.commit();
 
-client.query("SELECT COUNT(*) as count FROM beatles", function(err, result){
+client.query("SELECT COUNT(*) AS count FROM beatles", function(err, result){
   if (err) return die(err);
   console.log(result.rows[0].count); // 1
   client.end();
