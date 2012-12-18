@@ -14,7 +14,7 @@ var
 , Transaction = require('pg-transaction')
 
   // Configuration stuff
-, connectionString = process.env['PG_CON'] || '';
+, connectionString = process.env['PG_CON'] || ''
 ;
 
 var die = function(err){

@@ -2,7 +2,7 @@ var
   pg = require('pg')
 , Transaction = require('./')
 
-, connectionString = process.env['PG_CON'] || '';
+, connectionString = process.env['PG_CON'] || ''
 ;
 
 var die = function(err){
