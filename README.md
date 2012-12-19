@@ -73,3 +73,11 @@ client.query("SELECT COUNT(*) AS count FROM beatles", function(err, result){
   client.end();
 });
 ```
+
+## Contributors:
+
+- [Lalit Kapoor](https://github.com/lalitkapoor)
+
+## Special thanks to the following:
+
+- [Brian M. Carlson](https://github.com/brianc)
