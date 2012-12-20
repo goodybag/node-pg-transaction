@@ -82,6 +82,73 @@ describe('transaction', function(){
       err.code.should.equal('3B001');
       done();
     });
+    tx.commit();
+  });
+
+  it('error in transaction', function(done){
+    var tx = new Transaction(this.client);
+
+    var successful = true;
+    tx.on('error', function(err){
+      successful = false;
+    });
+
+    tx.begin();
+    tx.query("INSERT INTO beatles(name, height, birthday) values($1, $2, $3)", ['Ringo', 67, new Date(1945, 11, 2)]);
+    tx.query("INSERT INTO dummy(name, height, birthday) values($1, $2, $3)", ['Bob', 68, new Date(1944, 10, 13)]);
+    tx.query("INSERT INTO beatles(name, height, birthday) values($1, $2, $3)", ['John', 68, new Date(1944, 10, 13)]);
+    tx.commit();
+    this.client.query("SELECT * FROM beatles", function(err, result){
+      if (err) throw err;
+      successful.should.equal(false);
+      result.rows.should.have.length(0);
+      done();
+    });
+  });
+
+  it('recover from error in transaction by using a savepoint', function(done){
+    var self = this;
+    var tx = new Transaction(this.client);
+
+    var checkDone = function(){
+      self.client.query("SELECT * FROM beatles", function(err, result){
+        if (err) throw err;
+        result.rows.should.have.length(2);
+        done();
+      });
+    }
+
+    tx.begin(function(err){
+      if (err) throw err;
+      tx.query("INSERT INTO beatles(name, height, birthday) values($1, $2, $3)", ['Ringo', 67, new Date(1945, 11, 2)], function(err){
+        if (err) throw err;
+        tx.savepoint('savepoint1', function(err){
+          if (err) throw err;
+          tx.query("INSERT INTO dummy(name, height, birthday) values($1, $2, $3)", ['Bob', 68, new Date(1944, 10, 13)], function(err){
+            if (err) {
+              tx.rollback('savepoint1', function(err){
+                if (err) throw err;
+                tx.query("INSERT INTO beatles(name, height, birthday) values($1, $2, $3)", ['John', 68, new Date(1944, 10, 13)], function(err){
+                  tx.commit(function(err){
+                    if (err) throw err;
+                    checkDone();
+                  });
+                });
+              });
+            } else {
+              tx.query("INSERT INTO beatles(name, height, birthday) values($1, $2, $3)", ['John', 68, new Date(1944, 10, 13)], function(err){
+                tx.commit(function(err){
+                  if (err) throw err;
+                  checkDone();
+                });
+              });
+            }
+          });
+        });
+      });
+    });
+  });
+
   it('abort a failing transaction', function(done){
 
     var stage = null;
