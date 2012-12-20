@@ -5,6 +5,7 @@
 
 var
   pg = require('pg')
+, async = require('async')
 , should = require('should')
 , Transaction = require('../');
 ;
@@ -81,5 +82,43 @@ describe('transaction', function(){
       err.code.should.equal('3B001');
       done();
     });
+  it('abort a failing transaction', function(done){
+
+    var stage = null;
+    var tx = new Transaction(this.client);
+    async.series(
+      {
+        begin: function(callback){
+          stage = 'begin';
+          tx.begin(callback);
+        }
+      , i1: function(callback){
+          stage = 'i1';
+          tx.query("INSERT INTO beatles(name, height, birthday) values($1, $2, $3)", ['Ringo', 67, new Date(1945, 11, 2)], callback);
+        }
+      , i2: function(callback){
+          stage = 'i2';
+          tx.query("INSERT INTO dummy(name, height, birthday) values($1, $2, $3)", ['Bob', 68, new Date(1944, 10, 13)], callback);
+        }
+      , i3: function(callback){
+          stage = 'i3';
+          tx.query("INSERT INTO beatles(name, height, birthday) values($1, $2, $3)", ['John', 68, new Date(1944, 10, 13)], callback);
+        }
+      , commit: function(callback){
+          stage = 'commit';
+          tx.commit(function(err){
+            if (err) return callback(err);
+            done();
+          });
+        }
+      }
+    , function(err, results){
+        if('i2' === stage) should.exist(err);
+        if (err) return tx.abort(function(err){
+          if (err) throw err;
+          done();
+        });
+      }
+    );
   });
 });

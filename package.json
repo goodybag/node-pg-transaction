@@ -11,7 +11,8 @@
   },
   "devDependencies": {
     "mocha": "1.7.x",
-    "should": "1.2.x"
+    "should": "1.2.x",
+    "async": "0.1.x"
   },
   "scripts": {
     "test": "make test"
