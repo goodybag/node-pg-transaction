@@ -7,11 +7,11 @@ var
   pg = require('pg')
 , async = require('async')
 , should = require('should')
-, Transaction = require('../');
+, Transaction = require('../')
 ;
 
 var
-  connectionStr = process.env['PG_CON'] || '';
+  connectionStr = process.env['PG_CON'] || ''
 ;
 
 describe('transaction', function(){
