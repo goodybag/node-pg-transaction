@@ -17,17 +17,16 @@ npm install pg-transaction
 
 ```javascript
 begin(callback);
-query(config, values, callback); // this is pg.Client.query from node-postgres
+query(); // This is pg.Client.query from node-postgres. There are various possible arguments look at its documentation
 savepoint(savepoint, callback);
 release(savepoint, callback);
 rollback(savepoint, callback);
 commit(callback);
+abort(callback);
 ```
 
 ## Events:
 
-- row
-- end
 - error
 
 ## Example:
