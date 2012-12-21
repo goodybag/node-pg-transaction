@@ -149,8 +149,7 @@ describe('transaction', function(){
     });
   });
 
-  it('abort a failing transaction', function(done){
-
+  it('#abort a failing transaction', function(done){
     var stage = null;
     var tx = new Transaction(this.client);
     async.series(
