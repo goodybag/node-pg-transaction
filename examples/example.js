@@ -1,6 +1,6 @@
 var
   pg = require('pg')
-, Transaction = require('./')
+, Transaction = require('../')
 
 , connectionString = process.env['PG_CON'] || ''
 ;
