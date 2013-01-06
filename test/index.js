@@ -16,9 +16,10 @@ var
 
 describe('transaction', function(){
   beforeEach(function(){
+    pg.types.setTypeParser(20, String);
     this.client = new pg.Client(connectionStr);
     this.client.connect();
-    this.client.query("CREATE TEMP TABLE beatles(name varchar(10), height integer, birthday timestamptz)");
+    this.client.query("CREATE TEMP TABLE beatles(name varchar(10), height integer, birthday timestamptz, large bigint)");
   });
 
   afterEach(function(){
@@ -184,6 +185,36 @@ describe('transaction', function(){
           if (err) throw err;
           done();
         });
+      }
+    );
+  });
+
+  it('#issue1 - use defined type', function(done){
+    var self = this;
+    var tx = new Transaction(this.client);
+    async.series(
+      {
+        begin: function(callback) { 
+          tx.begin(callback);
+        }
+      , i1: function(callback) {
+          callback();
+          tx.query("INSERT INTO beatles(name, height, birthday, large) values($1, $2, $3, $4)", ['Ringo', 67, new Date(1945, 11, 2), '12345678901'], callback);
+        }
+      , commit: function(callback) { 
+          tx.commit(function(err){
+            if (err) return callback(err);
+            self.client.query("SELECT large FROM beatles WHERE name='Ringo'", function(err, result){
+              if (err) return callback(err);
+              result.rows.should.have.length(1);
+              result.rows[0].large.should.be.a('string');
+              done();
+            });
+          });
+        }
+      }
+    , function(err, results) {
+        if (err) throw err;
       }
     );
   });
