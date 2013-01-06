@@ -202,14 +202,14 @@ describe('transaction', function(){
           tx.query("INSERT INTO beatles(name, height, birthday, large) values($1, $2, $3, $4)", ['Ringo', 67, new Date(1945, 11, 2), '12345678901'], callback);
         }
       , commit: function(callback) { 
-          tx.commit(function(err){
+          tx.commit(callback);
+        }
+      , confirm: function(callback) {
+          self.client.query("SELECT large FROM beatles WHERE name='Ringo'", function(err, result){
             if (err) return callback(err);
-            self.client.query("SELECT large FROM beatles WHERE name='Ringo'", function(err, result){
-              if (err) return callback(err);
-              result.rows.should.have.length(1);
-              result.rows[0].large.should.be.a('string');
-              done();
-            });
+            result.rows.should.have.length(1);
+            result.rows[0].large.should.be.a('string');
+            done();
           });
         }
       }
