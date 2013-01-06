@@ -218,7 +218,10 @@ describe('transaction', function(){
         }
       }
     , function(err, results) {
-        if (err) throw err;
+        if (err) {
+          pg.types.setTypeParser(20, originalTypeParser20);
+          throw err;
+        }
       }
     );
   });
