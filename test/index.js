@@ -18,7 +18,7 @@ describe('transaction', function(){
   beforeEach(function(){
     this.client = new pg.Client(connectionStr);
     this.client.connect();
-    this.client.query("CREATE TEMP TABLE beatles(name varchar(10), height integer, birthday timestamptz)");
+    this.client.query("CREATE TEMP TABLE beatles(name varchar(10), height integer, birthday timestamptz, large bigint)");
   });
 
   afterEach(function(){
@@ -184,6 +184,44 @@ describe('transaction', function(){
           if (err) throw err;
           done();
         });
+      }
+    );
+  });
+
+  it('should use custom defined type parsers', function(done){
+    var originalTypeParser20 = pg.types.getTypeParser(20);
+    pg.types.setTypeParser(20, String);
+    var self = this;
+    var tx = new Transaction(this.client);
+    async.series(
+      {
+        begin: function(callback) { 
+          tx.begin(callback);
+        }
+      , i1: function(callback) {
+          callback();
+          tx.query("INSERT INTO beatles(name, height, birthday, large) values($1, $2, $3, $4)", ['Ringo', 67, new Date(1945, 11, 2), '12345678901'], callback);
+        }
+      , commit: function(callback) { 
+          tx.commit(callback);
+        }
+      , confirm: function(callback) {
+          self.client.query("SELECT large FROM beatles WHERE name='Ringo'", function(err, result){
+            if (err) return callback(err);
+            result.rows.should.have.length(1);
+            result.rows[0].large.should.be.a('string');
+
+            // restore original parser
+            pg.types.setTypeParser(20, originalTypeParser20);
+            done();
+          });
+        }
+      }
+    , function(err, results) {
+        if (err) {
+          pg.types.setTypeParser(20, originalTypeParser20);
+          throw err;
+        }
       }
     );
   });
