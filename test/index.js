@@ -16,7 +16,6 @@ var
 
 describe('transaction', function(){
   beforeEach(function(){
-    pg.types.setTypeParser(20, String);
     this.client = new pg.Client(connectionStr);
     this.client.connect();
     this.client.query("CREATE TEMP TABLE beatles(name varchar(10), height integer, birthday timestamptz, large bigint)");
@@ -189,7 +188,9 @@ describe('transaction', function(){
     );
   });
 
-  it('#issue1 - use defined type', function(done){
+  it('should use custom defined type parsers', function(done){
+    var originalTypeParser20 = pg.types.getTypeParser(20);
+    pg.types.setTypeParser(20, String);
     var self = this;
     var tx = new Transaction(this.client);
     async.series(
@@ -209,6 +210,9 @@ describe('transaction', function(){
             if (err) return callback(err);
             result.rows.should.have.length(1);
             result.rows[0].large.should.be.a('string');
+
+            // restore original parser
+            pg.types.setTypeParser(20, originalTypeParser20);
             done();
           });
         }
