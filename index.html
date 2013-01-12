@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>node-pg-transaction by goodybag</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>node-pg-transaction</h1>
+        <p></p>
+
+        <p class="view"><a href="https://github.com/goodybag/node-pg-transaction">View the Project on GitHub <small>goodybag/node-pg-transaction</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/goodybag/node-pg-transaction/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/goodybag/node-pg-transaction/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/goodybag/node-pg-transaction">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p><a href="https://travis-ci.org/goodybag/node-pg-transaction"><img src="https://travis-ci.org/goodybag/node-pg-transaction.png" alt="Build Status"></a></p>
+
+<p>Make it easier to write transactions for PostgreSQL using <a href="https://github.com/brianc/node-postgres">node-postgres</a>.</p>
+
+<p>The callback and event emitter styles both work.<br><strong>Note:</strong> if you use a callback, then the error event won't be emitted. This is consistent with node-postgres.</p>
+
+<h2>Installation:</h2>
+
+<p>To install the most recent release from npm, run:</p>
+
+<pre><code>npm install pg-transaction
+</code></pre>
+
+<h2>Methods:</h2>
+
+<div class="highlight"><pre><span class="nx">begin</span><span class="p">([</span><span class="nx">callback</span><span class="p">]);</span>
+<span class="nx">query</span><span class="p">();</span> <span class="c1">// This is pg.Client.query from node-postgres. There are various possible arguments look at its documentation</span>
+<span class="nx">savepoint</span><span class="p">(</span><span class="nx">savepoint</span><span class="p">,</span> <span class="p">[</span><span class="nx">callback</span><span class="p">]);</span>
+<span class="nx">release</span><span class="p">(</span><span class="nx">savepoint</span><span class="p">,</span> <span class="p">[</span><span class="nx">callback</span><span class="p">]);</span>
+<span class="nx">rollback</span><span class="p">([</span><span class="nx">savepoint</span><span class="p">],</span> <span class="p">[</span><span class="nx">callback</span><span class="p">]);</span>
+<span class="nx">commit</span><span class="p">([</span><span class="nx">callback</span><span class="p">]);</span>
+<span class="nx">abort</span><span class="p">([</span><span class="nx">callback</span><span class="p">]);</span>
+</pre></div>
+
+<h2>Events:</h2>
+
+<ul>
+<li>error</li>
+</ul><h2>Example:</h2>
+
+<div class="highlight"><pre>
+<span class="cm">/**</span>
+<span class="cm"> * Module dependencies</span>
+<span class="cm"> */</span>
+
+<span class="kd">var</span>
+  <span class="c1">// PostgreSQL modules</span>
+  <span class="nx">pg</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'pg'</span><span class="p">)</span>
+<span class="p">,</span> <span class="nx">Transaction</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'pg-transaction'</span><span class="p">)</span>
+
+  <span class="c1">// Configuration stuff</span>
+<span class="p">,</span> <span class="nx">connectionString</span> <span class="o">=</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">[</span><span class="s1">'PG_CON'</span><span class="p">]</span> <span class="o">||</span> <span class="s1">''</span>
+<span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">die</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">){</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">throw</span> <span class="nx">err</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">pg</span><span class="p">.</span><span class="nx">Client</span><span class="p">(</span><span class="nx">connectionString</span><span class="p">);</span>
+<span class="nx">client</span><span class="p">.</span><span class="nx">connect</span><span class="p">();</span>
+
+<span class="nx">client</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s2">"CREATE TEMP TABLE beatles(name varchar(10), height integer, birthday timestamptz)"</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">tx</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Transaction</span><span class="p">(</span><span class="nx">client</span><span class="p">);</span>
+<span class="nx">tx</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'error'</span><span class="p">,</span> <span class="nx">die</span><span class="p">);</span>
+
+<span class="nx">tx</span><span class="p">.</span><span class="nx">begin</span><span class="p">();</span>
+<span class="nx">tx</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s2">"INSERT INTO beatles(name, height, birthday) values($1, $2, $3)"</span><span class="p">,</span> <span class="p">[</span><span class="s1">'Ringo'</span><span class="p">,</span> <span class="mi">67</span><span class="p">,</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="mi">1945</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]);</span>
+<span class="nx">tx</span><span class="p">.</span><span class="nx">savepoint</span><span class="p">(</span><span class="s1">'savepoint1'</span><span class="p">);</span>
+<span class="nx">tx</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s2">"INSERT INTO beatles(name, height, birthday) values($1, $2, $3)"</span><span class="p">,</span> <span class="p">[</span><span class="s1">'John'</span><span class="p">,</span> <span class="mi">68</span><span class="p">,</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="mi">1944</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">13</span><span class="p">)]);</span>
+<span class="nx">tx</span><span class="p">.</span><span class="nx">rollback</span><span class="p">(</span><span class="s1">'savepoint1'</span><span class="p">);</span> <span class="c1">// all statements after savepoint1 are undone (John will not be inserted)</span>
+<span class="nx">tx</span><span class="p">.</span><span class="nx">release</span><span class="p">(</span><span class="s1">'savepoint1'</span><span class="p">);</span> <span class="c1">// can no longer use savepoint1 as a point to rollback to</span>
+<span class="nx">tx</span><span class="p">.</span><span class="nx">commit</span><span class="p">();</span>
+
+<span class="nx">client</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s2">"SELECT COUNT(*) AS count FROM beatles"</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">result</span><span class="p">){</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">die</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">count</span><span class="p">);</span> <span class="c1">// 1</span>
+  <span class="nx">client</span><span class="p">.</span><span class="nx">end</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+
+<h2>Contributors:</h2>
+
+<ul>
+<li><a href="https://github.com/lalitkapoor">Lalit Kapoor</a></li>
+</ul><h3>Special thanks to the following:</h3>
+
+<ul>
+<li><a href="https://github.com/brianc">Brian M. Carlson</a></li>
+</ul>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/goodybag">goodybag</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
