@@ -8,6 +8,7 @@ var
 , async = require('async')
 , should = require('should')
 , Transaction = require('../')
+, assert = require('assert')
 ;
 
 var
@@ -128,7 +129,15 @@ describe('transaction', function(){
             if (err) {
               tx.rollback('savepoint1', function(err){
                 if (err) throw err;
-                tx.query("INSERT INTO beatles(name, height, birthday) values($1, $2, $3)", ['John', 68, new Date(1944, 10, 13)], function(err){
+                tx.query("INSERT INTO beatles(name, height, birthday) values($1, $2, $3) RETURNING *", ['John', 68, new Date(1944, 10, 13)], function(err, result){
+                  assert.ifError(err);
+                  assert(result, "should have a result");
+                  assert(result.rows, "result should have rows");
+                  result.rows.length.should.eql(1);
+                  var john = result.rows[0];
+                  john.name.should.eql('John');
+                  john.height.should.eql(68);
+                  john.birthday.getFullYear().should.eql(1944);
                   tx.commit(function(err){
                     if (err) throw err;
                     checkDone();
