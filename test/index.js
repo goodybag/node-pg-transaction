@@ -21,7 +21,8 @@ describe('transaction', function(){
     this.client.query("CREATE TEMP TABLE beatles(name varchar(10), height integer, birthday timestamptz, large bigint)");
   });
 
-  afterEach(function(){
+  afterEach(function(done){
+    this.client.on('end', done);
     this.client.end();
   });
 
@@ -80,9 +81,8 @@ describe('transaction', function(){
     tx.rollback('test', function(err){
       should.exist(err);
       err.code.should.equal('3B001');
-      done();
     });
-    tx.commit();
+    tx.commit(done);
   });
 
   it('error in transaction', function(done){
