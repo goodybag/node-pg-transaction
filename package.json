@@ -1,13 +1,13 @@
 {
   "name": "pg-transaction",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "description": "simplify executing transactions with node-postgres",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
-  "dependencies": {
-    "pg": "0.10.x"
+  "peerDependencies": {
+    "pg": "1.x"
   },
   "devDependencies": {
     "mocha": "1.7.x",
