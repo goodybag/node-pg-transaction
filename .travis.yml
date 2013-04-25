@@ -5,3 +5,4 @@ env:
   - PG_CON="postgres://postgres@127.0.0.1/node_pg_transaction"
 node_js:
   - 0.8
+  - 0.10
