@@ -10,6 +10,7 @@
     "pg": "1.x"
   },
   "devDependencies": {
+    "pg": "1.x",
     "mocha": "1.7.x",
     "should": "1.2.x",
     "async": "0.1.x"
