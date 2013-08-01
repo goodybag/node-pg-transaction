@@ -7,10 +7,10 @@
     "test": "test"
   },
   "peerDependencies": {
-    "pg": "1.x"
+    "pg": "2.x"
   },
   "devDependencies": {
-    "pg": "1.x",
+    "pg": "2.x",
     "mocha": "1.7.x",
     "should": "1.2.x",
     "async": "0.1.x"
