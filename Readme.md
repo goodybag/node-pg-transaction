@@ -17,7 +17,7 @@ npm install pg-transaction
 ## Methods:
 
 ```javascript
-begin([callback]);
+begin([mode], [callback]);
 query(); // This is pg.Client.query from node-postgres. There are various possible arguments look at its documentation
 savepoint(savepoint, [callback]);
 release(savepoint, [callback]);
