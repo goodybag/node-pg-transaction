@@ -1,6 +1,6 @@
 {
   "name": "pg-transaction",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "simplify executing transactions with node-postgres",
   "main": "index.js",
   "directories": {
