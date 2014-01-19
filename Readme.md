@@ -1,6 +1,8 @@
 [![Build Status](https://travis-ci.org/goodybag/node-pg-transaction.png)](https://travis-ci.org/goodybag/node-pg-transaction)
 [![Dependency Status](https://gemnasium.com/goodybag/node-pg-transaction.png)](https://gemnasium.com/goodybag/node-pg-transaction)
 
+[![NPM](https://nodei.co/npm/pg-transaction.png)](https://nodei.co/npm/pg-transaction/)
+
 Make it easier to write transactions for PostgreSQL using [node-postgres](https://github.com/brianc/node-postgres).
 
 The callback and event emitter styles both work.  
