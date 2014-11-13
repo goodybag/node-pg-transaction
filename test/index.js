@@ -40,16 +40,23 @@ describe('transaction', function(){
     });
   });
 
-  it('#rollback - should not exist in the database', function(done){
-    var tx = new Transaction(this.client);
-    tx.begin();
-    tx.query("INSERT INTO beatles(name, height, birthday) values($1, $2, $3)", ['Ringo', 67, new Date(1945, 11, 2)]);
-    tx.query("INSERT INTO beatles(name, height, birthday) values($1, $2, $3)", ['John', 68, new Date(1944, 10, 13)]);
-    tx.rollback();
-    this.client.query("SELECT * FROM beatles WHERE name = $1", ['John'], function(err, result){
-      if (err) throw err;
-      result.rows.should.have.length(0);
-      done();
+  describe('#rollback -', function () {
+    it('should not exist in the database', function(done){
+      var tx = new Transaction(this.client);
+      tx.begin();
+      tx.query("INSERT INTO beatles(name, height, birthday) values($1, $2, $3)", ['Ringo', 67, new Date(1945, 11, 2)]);
+      tx.query("INSERT INTO beatles(name, height, birthday) values($1, $2, $3)", ['John', 68, new Date(1944, 10, 13)]);
+      tx.rollback();
+      this.client.query("SELECT * FROM beatles WHERE name = $1", ['John'], function(err, result){
+        if (err) throw err;
+        result.rows.should.have.length(0);
+        done();
+      });
+    });
+    it('calls the callback when used with arity 1', function(done) {
+      var tx = new Transaction(this.client);
+      tx.begin();
+      tx.rollback(done);
     });
   });
 
